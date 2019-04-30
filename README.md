@@ -5,6 +5,8 @@
 
 ![Normal View](Snapshots/snapshot2.png)
 <p align="center"><b>Normal View</b></p>
+
 ![Satelite](Snapshots/snapshot3.png)
 <p align="center"><b>Satelite View</b></p>
+
 <p align="center"><b>© Created by geekymano</b></p>
