@@ -1,5 +1,4 @@
 var varMap = L.map('map', { center: [10.0, 5.0], minZoom: 2, zoom: 15 }).fitWorld();
-
 var MapLink = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18,
   attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a>'
@@ -15,27 +14,6 @@ var OpenMapSurfer_Roads = L.tileLayer('https://maps.heigit.org/openmapsurfer/til
 var Hydda_Full = L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
   maxZoom: 18,
   attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a>'
-});
-var Stamen_Toner = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.{ext}', {
-  attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a>',
-  subdomains: 'abcd',
-  minZoom: 0,
-  maxZoom: 20,
-  ext: 'png'
-});
-var Stamen_TonerLite = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.{ext}', {
-  attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a>',
-  subdomains: 'abcd',
-  minZoom: 0,
-  maxZoom: 20,
-  ext: 'png'
-});
-var Stamen_Terrain = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}', {
-  attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a>',
-  subdomains: 'abcd',
-  minZoom: 0,
-  maxZoom: 18,
-  ext: 'png'
 });
 var HikeBike_HikeBike = L.tileLayer('https://tiles.wmflabs.org/hikebike/{z}/{x}/{y}.png', {
   maxZoom: 19,
@@ -58,21 +36,11 @@ var baseMaps = {
   "OpenTopoMap": OpenTopoMap,
   "OpenMapSurfer_Roads": OpenMapSurfer_Roads,
   "Hydda_Full": Hydda_Full,
-  "Stamen_Toner": Stamen_Toner,
-  "Stamen_TonerLite": Stamen_TonerLite,
-  "Stamen_Terrain": Stamen_Terrain,
   "HikeBike_HikeBike": HikeBike_HikeBike,
   "Esri_WorldImagery": Esri_WorldImagery,
 };
 L.control.layers(baseMaps).addTo(varMap);
 var myURL = jQuery('script[src$="leaf-demo.js"]').attr('src').replace('leaf-demo.js', '');
-// var myIcon = L.icon({
-//   iconUrl: myURL + '../images/tractor.png',
-//   iconRetinaUrl: myURL + 'images/tractor.png',
-//   iconSize: [40, 40],
-//   iconAnchor: [9, 21],
-//   popupAnchor: [0, -14]
-// });
 var myIcon = L.icon({
   iconUrl: myURL + '../images/tractor.png',
   iconSize: [40, 40],
@@ -114,21 +82,11 @@ var portugal = L.icon({
   iconUrl: myURL + '../images/portugal.png',
   iconSize: [40, 40],
 });
+var radiobutton = L.icon({
+  iconUrl: myURL + '../images/radio_button.png',
+  iconSize: [20, 20],
+});
 var markerClusters = L.markerClusterGroup();
-
-// for ( var i = 0; i < markers.length; ++i )
-// {
-//   // console.log(markers[i].name);
-//   var popup = markers[i].name +
-//               '<br/>' + markers[i].city +
-//               '<br/><b>IATA/FAA:</b> ' + markers[i].iata_faa +
-//               '<br/><b>ICAO:</b> ' + markers[i].icao +
-//               '<br/><b>Altitude:</b> ' + Math.round( markers[i].alt * 0.3048 ) + ' m' +
-//               '<br/><b>Timezone:</b> ' + markers[i].tz;
-//   // var m = L.marker( [markers[i].lat, markers[i].lng],{icon: myIcon}).bindPopup(popup).on('click', openDiv);
-//   var m = L.marker( [markers[i].lat, markers[i].lng],{icon: myIcon}).bindPopup(popup).on('click', openDiv);
-//   markerClusters.addLayer( m );
-// }
 for (var i = 0; i < markers.length; ++i) {
   var city = markers[i].city;
   var cityArr = city.split(",");
@@ -206,10 +164,18 @@ function dust() {
   document.getElementById('mapTop').style.display = 'none';
 }
 varMap.addLayer(markerClusters);
+var drawnItems = new L.FeatureGroup();
+varMap.addLayer(drawnItems);
+var drawControl = new L.Control.Draw({
+  edit: {
+    featureGroup: drawnItems
+  }
+});
 
+varMap.addControl(drawControl);
 
-// function centerLeafletMapOnMarker(map, marker) {
-//   var latLngs = [ marker.getLatLng() ];
-//   var markerBounds = L.latLngBounds(latLngs);
-//   map.fitBounds(markerBounds);
-// }
+varMap.on(L.Draw.Event.CREATED, function (e) {
+  var type = e.layerType
+  var layer = e.layer;
+  drawnItems.addLayer(layer);
+});
